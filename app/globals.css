@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f1eee4;
+  color: #171512;
+}
+
+.stitch {
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 8px,
+    transparent 8px 16px
+  );
+  opacity: 0.25;
+}
+
+.field {
+  @apply w-full border border-ink/15 bg-white rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-inkSoft/60 focus:outline-none focus:ring-2 focus:ring-laterite/40;
+}
+
+.label {
+  @apply block text-[0.68rem] uppercase tracking-wider text-inkSoft mb-1.5;
+}
+
+.btn-gold {
+  @apply inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-indigo950 text-sm transition hover:-translate-y-0.5 hover:shadow-lg;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center gap-2 rounded-full border border-ink px-6 py-3 font-semibold text-ink text-sm transition hover:bg-ink hover:text-paper;
+}
+
+.chip {
+  @apply px-4 py-2 rounded-full border border-ink/15 bg-paper text-sm font-medium cursor-pointer transition;
+}
+.chip.active {
+  @apply bg-indigo900 text-paper border-indigo900;
+}

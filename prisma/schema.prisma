@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  AGENT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(STUDENT)
+  createdAt    DateTime @default(now())
+
+  // Contact number used for direct WhatsApp chat on listings / roommate cards.
+  phone String?
+
+  // Signup verification (email OTP or phone OTP via SMS).
+  verified      Boolean @default(false)
+  verifyChannel String? // "email" | "phone"
+
+  // Roommate-search profile fields (relevant when role = STUDENT)
+  level    String?
+  faculty  String?
+  gender   String?
+  budget   Int?
+  tags     String? // comma-separated
+  bio      String?
+
+  // Agent annual-plan payment gate (relevant when role = AGENT)
+  agentPaymentStatus String    @default("unpaid") // "unpaid" | "pending" | "paid"
+  agentPaidAt        DateTime?
+
+  listings      Listing[]      @relation("AgentListings")
+  savedListings SavedListing[]
+  savedProfiles SavedProfile[] @relation("SavedProfileOwner")
+  savedByOthers SavedProfile[] @relation("SavedProfileTarget")
+  otpCodes      OtpCode[]
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  userId    String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Listing {
+  id          String   @id @default(cuid())
+  title       String
+  area        String
+  type        String
+  price       Int
+  badge       String?
+  description String?
+  amenities   String? // comma-separated
+  images      String? // comma-separated URLs
+  agentId     String
+  agent       User     @relation("AgentListings", fields: [agentId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  savedBy SavedListing[]
+
+  @@index([area])
+  @@index([type])
+}
+
+model SavedListing {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+}
+
+model SavedProfile {
+  id        String   @id @default(cuid())
+  ownerId   String
+  targetId  String
+  createdAt DateTime @default(now())
+
+  owner  User @relation("SavedProfileOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  target User @relation("SavedProfileTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, targetId])
+}
