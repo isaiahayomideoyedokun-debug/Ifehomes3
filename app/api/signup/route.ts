@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { sendEmailOtp, sendPhoneOtp } from "@/lib/otp";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -31,20 +30,6 @@ export async function POST(req: Request) {
   const user = await prisma.user.create({
     data: { name, email: normalizedEmail, phone, passwordHash, role, verifyChannel },
   });
-
-  try {
-    if (verifyChannel === "email") {
-      await sendEmailOtp(user.id, user.email);
-    } else {
-      await sendPhoneOtp(phone);
-    }
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { error: "Account created, but we couldn't send the verification code. Try resending it from the verify page." },
-      { status: 200, headers: { "X-Signup-Warning": "otp-send-failed" } }
-    );
-  }
 
   return NextResponse.json({ id: user.id, email: user.email, verifyChannel });
 }
