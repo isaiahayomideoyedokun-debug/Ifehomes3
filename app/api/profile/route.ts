@@ -15,7 +15,7 @@ export async function PATCH(req: Request) {
   if (!session) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
 
   const body = await req.json();
-  const allowed = ["level", "faculty", "gender", "budget", "tags", "bio", "name", "phone"];
+  const allowed = ["level", "faculty", "gender", "budget", "tags", "bio", "name", "phone", "lookingForRoommate"];
   const data: Record<string, unknown> = {};
   for (const key of allowed) if (key in body) data[key] = body[key];
 

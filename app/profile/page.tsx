@@ -15,6 +15,7 @@ export default function ProfilePage() {
     gender: "F",
     budget: "",
     bio: "",
+    lookingForRoommate: true,
   });
   const [tags, setTags] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
@@ -32,6 +33,7 @@ export default function ProfilePage() {
           gender: data.gender ?? "F",
           budget: data.budget?.toString() ?? "",
           bio: data.bio ?? "",
+          lookingForRoommate: data.lookingForRoommate ?? true,
         });
         setTags(data.tags ? data.tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []);
         setLoading(false);
@@ -114,6 +116,19 @@ export default function ProfilePage() {
                   </label>
                 ))}
               </div>
+            </div>
+            <div className="sm:col-span-2 flex items-center justify-between bg-paperDim rounded-xl px-4 py-3.5">
+              <div>
+                <div className="font-semibold text-sm">Still looking for a roommate?</div>
+                <div className="text-xs text-inkSoft mt-0.5">Turn this off to hide your card from the roommate search — your profile stays saved.</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, lookingForRoommate: !form.lookingForRoommate })}
+                className={`shrink-0 w-12 h-7 rounded-full relative transition ${form.lookingForRoommate ? "bg-indigo900" : "bg-ink/20"}`}
+              >
+                <span className={`absolute top-1 w-5 h-5 rounded-full bg-white transition ${form.lookingForRoommate ? "left-6" : "left-1"}`} />
+              </button>
             </div>
           </>
         )}

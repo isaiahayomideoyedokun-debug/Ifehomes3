@@ -12,6 +12,7 @@ export async function GET(req: Request) {
     where: {
       role: "STUDENT",
       faculty: { not: null },
+      lookingForRoommate: true,
       ...(faculty && faculty !== "all" ? { faculty } : {}),
       ...(gender && gender !== "any" ? { gender } : {}),
       ...(minBudget || maxBudget
