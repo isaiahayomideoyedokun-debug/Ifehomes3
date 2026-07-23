@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [role, setRole] = useState<"STUDENT" | "AGENT">("STUDENT");
   const [channel, setChannel] = useState<"email" | "phone">("email");
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -84,7 +85,16 @@ export default function SignupPage() {
         </div>
         <div>
           <label className="label">Password</label>
-          <input required minLength={6} type="password" className="field" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <div className="relative">
+            <input required minLength={6} type={showPassword ? "text" : "password"} className="field pr-16" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-inkSoft"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
 
         <div>

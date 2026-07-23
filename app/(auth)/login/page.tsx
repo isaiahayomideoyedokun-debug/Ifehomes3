@@ -9,8 +9,10 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const justVerified = searchParams.get("verified") === "1";
+  const justReset = searchParams.get("reset") === "1";
 
   const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [notVerified, setNotVerified] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -48,6 +50,11 @@ function LoginForm() {
           Your account is verified — sign in below.
         </p>
       )}
+      {justReset && (
+        <p className="text-sm bg-paperDim border border-ink/10 rounded-lg px-4 py-3 mb-6">
+          Your password has been reset — sign in with your new password.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
@@ -55,8 +62,20 @@ function LoginForm() {
           <input required type="email" className="field" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         </div>
         <div>
-          <label className="label">Password</label>
-          <input required type="password" className="field" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <div className="flex items-center justify-between">
+            <label className="label !mb-0">Password</label>
+            <Link href="/forgot-password" className="text-xs text-laterite font-semibold">Forgot password?</Link>
+          </div>
+          <div className="relative">
+            <input required type={showPassword ? "text" : "password"} className="field pr-16" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-inkSoft"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
         {error && <p className="text-laterite text-sm">{error}</p>}
         {notVerified && (
